@@ -1,0 +1,17 @@
+<header style="display:flex; gap:1rem; align-items:center; padding:1rem; border-bottom:1px solid #ddd;">
+  <h1 style="margin:0; font-size:1.2rem;">Tienda de Perritos</h1>
+
+  <ng-container *ngIf="!isLoggedIn">
+    <button (click)="login()">Iniciar sesion</button>
+  </ng-container>
+
+  <ng-container *ngIf="isLoggedIn">
+    <span>Hola, {{ userName }}</span>
+    <a routerLink="/pedidos">Ver pedidos</a>
+    <button (click)="logout()">Cerrar sesion</button>
+  </ng-container>
+</header>
+
+<main style="padding:1rem;">
+  <router-outlet></router-outlet>
+</main>
