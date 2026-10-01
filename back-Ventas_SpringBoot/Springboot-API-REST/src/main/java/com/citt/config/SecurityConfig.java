@@ -23,25 +23,37 @@ import org.springframework.security.web.SecurityFilterChain;
  *
  * @EnableMethodSecurity(prePostEnabled = true) habilita @PreAuthorize para
  * restringir operaciones especificas por scope, por ejemplo:
- *   @PreAuthorize("hasAuthority('SCOPE_OT.Create')")
+ * @PreAuthorize("hasAuthority('SCOPE_OT.Create')")
  */
+
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
+
                 // Preflight CORS del navegador, siempre debe pasar sin token
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                 // Documentacion, opcional dejarla publica
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**"
+                ).permitAll()
+
+                // Endpoint de prueba de RabbitMQ
+                .requestMatchers("/api/messages/**").permitAll()
+
                 // Todo el resto exige un JWT valido emitido por el tenant configurado
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt());
+
         return http.build();
     }
 }
