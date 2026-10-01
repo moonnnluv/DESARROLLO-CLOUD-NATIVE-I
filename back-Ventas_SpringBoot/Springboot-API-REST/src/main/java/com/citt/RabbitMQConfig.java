@@ -1,4 +1,4 @@
-package com.example;
+package com.citt;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
