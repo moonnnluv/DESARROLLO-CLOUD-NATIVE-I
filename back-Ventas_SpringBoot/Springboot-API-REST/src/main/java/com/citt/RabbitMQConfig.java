@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
+    // Cola simple del ejemplo productor/consumidor
+    public static final String HELLO_QUEUE = "hello";
+
     // Exchange y cola principal de órdenes
     public static final String ORDERS_EXCHANGE = "orders.exchange";
     public static final String ORDERS_QUEUE = "orders.queue";
@@ -66,5 +69,11 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(deadLetterQueue())
                 .to(deadLetterExchange());
+    }
+
+    // Cola simple "hello" (declarada aqui para que exista antes de enviar o consumir)
+    @Bean
+    public Queue helloQueue() {
+        return QueueBuilder.durable(HELLO_QUEUE).build();
     }
 }
