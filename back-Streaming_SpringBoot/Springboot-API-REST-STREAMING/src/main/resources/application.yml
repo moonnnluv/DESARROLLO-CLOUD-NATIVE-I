@@ -1,0 +1,38 @@
+server:
+  port: 8084   # Ventas 8081, Despachos 8082, RabbitAdmin 8083, kafka-lab 8888
+
+spring:
+  application:
+    name: Springboot-API-REST-STREAMING
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        # No agregar el nombre de la clase Java al mensaje: Ventas y este servicio
+        # intercambian solo JSON, sin compartir paquetes.
+        spring.json.add.type.headers: false
+    streams:
+      application-id: tienda-perritos-streaming   # Identifica el consumer group de Kafka Streams
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        # Un mensaje con JSON roto se registra en el log y se omite, en vez de detener el stream.
+        default.deserialization.exception.handler: org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
+        # Solo para laboratorio: sin cache y con commit cada 1 s, los totales aparecen de inmediato
+        # en el topic de salida (por defecto pueden tardar hasta 30 s).
+        commit.interval.ms: 1000
+        statestore.cache.max.bytes: 0
+
+# Parametros de negocio del pipeline (se leen en PipelineProperties).
+pipeline:
+  topics:
+    entrada: ventas-registradas        # Lo publica el microservicio Ventas
+    enriquecidas: ventas-enriquecidas
+    alertas: ventas-alertas
+    totales: ventas-totales-dia
+  reglas:
+    monto-minimo-clp: 1000        # Ventas bajo este monto se descartan (filtro)
+    monto-sospechoso-clp: 500000  # Ventas sobre este monto generan alerta ALTA
+  conversion:
+    clp-por-usd: 950.0            # Tasa SIMULADA de ejemplo, no es un tipo de cambio real

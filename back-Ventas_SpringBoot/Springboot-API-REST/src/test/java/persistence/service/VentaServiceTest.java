@@ -1,5 +1,6 @@
 package persistence.service;
 
+import com.citt.messaging.kafka.VentaEventPublisher;
 import com.citt.persistence.entity.Venta;
 import com.citt.persistence.repository.VentaRepository;
 import com.citt.persistence.services.VentaServiceImpl;
@@ -22,6 +23,9 @@ public class VentaServiceTest {
 
     @Mock
     private VentaRepository ventaRepository;
+
+    @Mock
+    private VentaEventPublisher ventaEventPublisher;
 
     @InjectMocks
     private VentaServiceImpl ventaService;

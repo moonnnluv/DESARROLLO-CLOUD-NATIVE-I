@@ -26,6 +26,7 @@ public class SecurityConfig {
 
                 // Permitir la documentación de Swagger.
                 .requestMatchers(
+                    "/swagger-ui.html",
                     "/swagger-ui/**",
                     "/v3/api-docs/**"
                 ).permitAll()

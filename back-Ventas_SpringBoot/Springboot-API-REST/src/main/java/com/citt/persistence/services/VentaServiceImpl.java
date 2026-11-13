@@ -1,6 +1,7 @@
 package com.citt.persistence.services;
 
 import com.citt.exceptions.VentaNotFoundException;
+import com.citt.messaging.kafka.VentaEventPublisher;
 import com.citt.persistence.entity.Venta;
 import com.citt.persistence.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class VentaServiceImpl implements VentaService{
     @Autowired
     private VentaRepository ventaRepository;
 
+    @Autowired
+    private VentaEventPublisher ventaEventPublisher;
+
     @Override
     public List<Venta> findAllVentas() {
         return ventaRepository.findAll();
@@ -23,7 +27,10 @@ public class VentaServiceImpl implements VentaService{
 
     @Override
     public Venta saveVenta(Venta venta) {
-        return ventaRepository.save(venta);
+        Venta ventaGuardada = ventaRepository.save(venta);
+        // Notifica a Kafka que se registro una venta (no afecta el guardado si Kafka falla)
+        ventaEventPublisher.publicarVentaRegistrada(ventaGuardada);
+        return ventaGuardada;
     }
 
     @Override

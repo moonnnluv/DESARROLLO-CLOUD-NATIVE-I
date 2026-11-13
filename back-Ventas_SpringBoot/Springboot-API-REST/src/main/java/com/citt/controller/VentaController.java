@@ -4,6 +4,7 @@ import com.citt.exceptions.VentaNotFoundException;
 import com.citt.persistence.entity.Venta;
 import com.citt.persistence.services.VentaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/ventas")
 @Tag(name = "Venta", description = "Controlador para gestionar ventas")
+@SecurityRequirement(name = "bearerAuth")
 public class VentaController {
 
     @Autowired
