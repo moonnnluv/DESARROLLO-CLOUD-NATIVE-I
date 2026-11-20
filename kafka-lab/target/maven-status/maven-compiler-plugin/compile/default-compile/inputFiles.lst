@@ -1,3 +1,6 @@
-C:\Users\cator\kafka-lab\src\main\java\com\kafka\consumer\KafkaConsumer.java
-C:\Users\cator\kafka-lab\src\main\java\com\kafka\controller\KafkaController.java
-C:\Users\cator\kafka-lab\src\main\java\com\kafka\KafkaTutorialApplication.java
+C:\Users\anton\OneDrive\Desktop\DesarrolloCloud\DESARROLLO-CLOUD-NATIVE-I\kafka-lab\src\main\java\com\kafka\config\KafkaProducerConfig.java
+C:\Users\anton\OneDrive\Desktop\DesarrolloCloud\DESARROLLO-CLOUD-NATIVE-I\kafka-lab\src\main\java\com\kafka\consumer\KafkaConsumer.java
+C:\Users\anton\OneDrive\Desktop\DesarrolloCloud\DESARROLLO-CLOUD-NATIVE-I\kafka-lab\src\main\java\com\kafka\consumer\SlowConsumer.java
+C:\Users\anton\OneDrive\Desktop\DesarrolloCloud\DESARROLLO-CLOUD-NATIVE-I\kafka-lab\src\main\java\com\kafka\controller\KafkaController.java
+C:\Users\anton\OneDrive\Desktop\DesarrolloCloud\DESARROLLO-CLOUD-NATIVE-I\kafka-lab\src\main\java\com\kafka\controller\LoadTestController.java
+C:\Users\anton\OneDrive\Desktop\DesarrolloCloud\DESARROLLO-CLOUD-NATIVE-I\kafka-lab\src\main\java\com\kafka\KafkaTutorialApplication.java

@@ -1,3 +1,5 @@
 com\kafka\consumer\KafkaConsumer.class
+com\kafka\consumer\SlowConsumer.class
+com\kafka\controller\LoadTestController.class
 com\kafka\KafkaTutorialApplication.class
 com\kafka\controller\KafkaController.class
