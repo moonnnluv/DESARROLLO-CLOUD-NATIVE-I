@@ -1,0 +1,41 @@
+{
+  "exchanges": [
+    { "name": "events.topic",       "vhost": "/", "type": "topic",  "durable": true, "auto_delete": false, "internal": false, "arguments": {} },
+    { "name": "shipments.dlx",      "vhost": "/", "type": "fanout", "durable": true, "auto_delete": false, "internal": false, "arguments": {} },
+    { "name": "notifications.dlx",  "vhost": "/", "type": "fanout", "durable": true, "auto_delete": false, "internal": false, "arguments": {} }
+  ],
+  "queues": [
+    {
+      "name": "shipments.queue", "vhost": "/", "durable": true, "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 30000,
+        "x-max-length": 1000,
+        "x-dead-letter-exchange": "shipments.dlx",
+        "x-dead-letter-routing-key": "shipment.dead"
+      }
+    },
+    {
+      "name": "shipments.dlq", "vhost": "/", "durable": true, "auto_delete": false,
+      "arguments": { "x-message-ttl": 86400000 }
+    },
+    {
+      "name": "notifications.queue", "vhost": "/", "durable": true, "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 30000,
+        "x-max-length": 1000,
+        "x-dead-letter-exchange": "notifications.dlx",
+        "x-dead-letter-routing-key": "notification.dead"
+      }
+    },
+    {
+      "name": "notifications.dlq", "vhost": "/", "durable": true, "auto_delete": false,
+      "arguments": { "x-message-ttl": 86400000 }
+    }
+  ],
+  "bindings": [
+    { "source": "events.topic",      "vhost": "/", "destination": "shipments.queue",     "destination_type": "queue", "routing_key": "shipment.*",     "arguments": {} },
+    { "source": "events.topic",      "vhost": "/", "destination": "notifications.queue", "destination_type": "queue", "routing_key": "notification.#", "arguments": {} },
+    { "source": "shipments.dlx",     "vhost": "/", "destination": "shipments.dlq",       "destination_type": "queue", "routing_key": "",               "arguments": {} },
+    { "source": "notifications.dlx", "vhost": "/", "destination": "notifications.dlq",   "destination_type": "queue", "routing_key": "",               "arguments": {} }
+  ]
+}

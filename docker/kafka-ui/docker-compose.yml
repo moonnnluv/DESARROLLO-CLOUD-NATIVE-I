@@ -1,0 +1,36 @@
+# Kafka UI: panel web para administrar y monitorear el cluster Kafka de docker/kafka.
+#
+# Que se puede hacer desde http://localhost:8080
+#   Brokers          ver los 3 brokers, cual es el controlador y el espacio que usan
+#   Topics           crear, configurar y borrar topicos; ver particiones, lider, replicas e ISR
+#   Messages         ver el contenido de cada mensaje, filtrar por particion u offset, y publicar mensajes de prueba
+#   Consumers        ver los consumer groups, que particiones tiene cada miembro y el LAG (mensajes pendientes)
+#
+# Requisito: el cluster debe estar levantado antes, porque este compose se une a su red "kafka-net".
+#   cd ../kafka      && docker compose up -d
+#   cd ../kafka-ui   && docker compose up -d
+#
+# Si usas tambien kafka-lab/compose.yaml (nodo unico) NO levantes ambos a la vez: los dos usan el puerto 8080.
+
+name: kafka-ui
+
+services:
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    container_name: kafka-ui
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: tienda-perritos
+      # Direcciones INTERNAL de los brokers (puerto 29092), visibles dentro de la red de Docker
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:29092,kafka-2:29092,kafka-3:29092
+      # Con esto Kafka UI permite crear y borrar topicos desde su interfaz
+      DYNAMIC_CONFIG_ENABLED: "true"
+    networks:
+      - kafka-net
+
+networks:
+  kafka-net:
+    external: true
+    name: kafka-net

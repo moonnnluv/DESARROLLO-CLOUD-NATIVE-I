@@ -1,0 +1,5 @@
+# Estos archivos se montan dentro de contenedores Linux: deben conservar saltos de linea LF aunque se clonen en Windows.
+*.sh   text eol=lf
+*.conf text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf

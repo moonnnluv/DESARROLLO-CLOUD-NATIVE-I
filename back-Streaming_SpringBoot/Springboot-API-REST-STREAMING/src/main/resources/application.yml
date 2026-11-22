@@ -1,24 +1,52 @@
 server:
-  port: 8084   # Ventas 8081, Despachos 8082, RabbitAdmin 8083, kafka-lab 8888
+  port: 8084   # Ventas 8081, Despachos 8082, RabbitAdmin 8083, Streaming 8084, KafkaAdmin 8085, kafka-lab 8888
 
 spring:
   application:
     name: Springboot-API-REST-STREAMING
   kafka:
-    bootstrap-servers: localhost:9092
+    # Los 3 brokers del cluster (docker/kafka). Con que uno responda, el cliente descubre a los otros dos
+    # y, si un broker cae, sigue conectado a los restantes.
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # acks=all: el lider confirma solo cuando las replicas en sincronia (min.insync.replicas=2) tienen el mensaje
+      acks: all
       properties:
         # No agregar el nombre de la clase Java al mensaje: Ventas y este servicio
         # intercambian solo JSON, sin compartir paquetes.
         spring.json.add.type.headers: false
+        # Los reintentos del productor no duplican mensajes
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+
+    # Consumidores (@KafkaListener). Cada listener define su propio groupId (alertas-group y analitica-group).
+    consumer:
+      group-id: streaming-default
+      auto-offset-reset: earliest    # un grupo nuevo empieza desde el primer mensaje disponible
+      enable-auto-commit: false      # el offset se confirma despues de procesar (ack-mode: record)
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # ErrorHandlingDeserializer evita que un JSON roto detenga el consumidor: el error se entrega
+      # al manejador de errores (KafkaConsumerErrorConfig) y el mensaje va al Dead Letter Topic.
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.use.type.headers: false
+        spring.json.trusted.packages: com.citt.streaming.model
+    listener:
+      ack-mode: record
+      concurrency: 3                 # un hilo por particion (los topics tienen 3 particiones)
+
     streams:
       application-id: tienda-perritos-streaming   # Identifica el consumer group de Kafka Streams
       properties:
         default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
         # Un mensaje con JSON roto se registra en el log y se omite, en vez de detener el stream.
         default.deserialization.exception.handler: org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
+        # Los topics internos de Kafka Streams (changelog y repartition) tambien se guardan en los 3 brokers
+        replication.factor: 3
         # Solo para laboratorio: sin cache y con commit cada 1 s, los totales aparecen de inmediato
         # en el topic de salida (por defecto pueden tardar hasta 30 s).
         commit.interval.ms: 1000
@@ -31,6 +59,7 @@ pipeline:
     enriquecidas: ventas-enriquecidas
     alertas: ventas-alertas
     totales: ventas-totales-dia
+  dlt-topic: ventas-dlt                # Dead Letter Topic: mensajes que los consumidores no pudieron procesar
   reglas:
     monto-minimo-clp: 1000        # Ventas bajo este monto se descartan (filtro)
     monto-sospechoso-clp: 500000  # Ventas sobre este monto generan alerta ALTA

@@ -2,3 +2,10 @@
 # Archivos de sistema y editor
 .DS_Store
 .vscode/
+
+# Compilacion y dependencias: cada tecnologia genera lo suyo y no se sube al repositorio
+target/
+node_modules/
+.angular/
+dist/
+.idea/

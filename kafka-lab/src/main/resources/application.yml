@@ -1,29 +1,29 @@
 server:
-   port: 8888
+  port: 8888
 
-   spring:
-   application:
-      name: kafka-tuning-lab
+spring:
+  application:
+    name: kafka-tuning-lab
 
-   kafka:
-      bootstrap-servers: localhost:9092
+  kafka:
+    bootstrap-servers: localhost:9092
 
-      producer:
-         key-serializer: org.apache.kafka.common.serialization.StringSerializer
-         value-serializer: org.apache.kafka.common.serialization.StringSerializer
-         acks: all
-         properties:
-         batch.size: ${KAFKA_BATCH_SIZE:32768}
-         linger.ms: ${KAFKA_LINGER_MS:20}
-         compression.type: ${KAFKA_COMPRESSION:snappy}
-         enable.idempotence: true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      properties:
+        batch.size: ${KAFKA_BATCH_SIZE:32768}
+        linger.ms: ${KAFKA_LINGER_MS:20}
+        compression.type: ${KAFKA_COMPRESSION:snappy}
+        enable.idempotence: true
 
-      consumer:
-         group-id: analytics-group
-         auto-offset-reset: earliest
-         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-         value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-         enable-auto-commit: false
+    consumer:
+      group-id: analytics-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
 
-      listener:
-         ack-mode: record
+    listener:
+      ack-mode: record
